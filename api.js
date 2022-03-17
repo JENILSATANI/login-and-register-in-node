@@ -9,6 +9,24 @@ var jwt = require('jsonwebtoken');
 var secret = 'bgmi';
 const {ObjectId} = require('mongodb')
 
+router.put('/savepassword', function(req, res) {
+    Name.findOne({ email: req.body.email }).exec(function(err, user) {
+        if (err) throw err;
+        if (req.body.password == null || req.body.password == '') {
+            res.json({ success: false, message: 'Password not provided' });
+        } else {
+            user.password = req.body.password;
+            user.save(function(err) {
+                if (err) {
+                    res.json({ success: false, message: err });
+                } else {
+                    res.json({ success: true, message: 'Password has been reset!' }); 
+                }
+            });
+        }
+    });
+});
+
 router.post('/', async (req, res) => {
     console.log("Hello");
     let data = new Name()
@@ -113,7 +131,7 @@ router.put('/:id', async (req, res) => {
             result.phone = req.body.phone,
             result.password = req.body.password
         result.save(function (err) {
-            if (err) {
+            if (err) { 
                 console.log(err);
             }
         });
